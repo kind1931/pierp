@@ -2,225 +2,86 @@
 <html lang="ko">
 
 <head>
-    <meta charset="UTF-8">
-    <title>Grid Model Generator</title>
-    <link rel="stylesheet" href="./css/style.css">
+    <meta charset="UTF-8" />
+    <title>Developer Tools</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 상단 메뉴 */
+        .topbar {
+            height: 48px;
+            background: #1f2937;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            gap: 20px;
+            font-size: 14px;
+        }
+
+        .menu-item {
+            cursor: pointer;
+            padding: 6px 10px;
+            border-radius: 4px;
+            transition: background .2s;
+        }
+
+        .menu-item:hover {
+            background: rgba(255, 255, 255, 0.18);
+        }
+
+        .menu-item.active {
+            background: rgba(255, 255, 255, 0.35);
+            font-weight: bold;
+        }
+
+        .frame-wrap {
+            flex: 1;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+    </style>
 </head>
 
 <body>
-    <div style="display:flex; justify-content:space-between; align-items:center;">
-        <h2>
-            PIERP Grid Model Generator
-            <help-tip>Query를 변환하여 cmodel(JSON)로 만들어 주는 도구입니다.</help-tip>
-        </h2>
-        <button id="btn-reset-storage" style="padding:4px 10px;">초기화
-            <help-tip left-bottom>
-                내용을 모두 지웁니다.(이전 상태로 복구 불가)
-            </help-tip>
-        </button>
+
+    <!-- 상단 메뉴 (grid-model-generator 전용) -->
+    <div class="topbar">
+        <div class="menu-item active" data-page="grid-model-generator/index.html">
+            🧩 Grid Model Generator
+        </div>
     </div>
 
-    <!-- 1) SQL 입력 -->
-    <h3>1) SQL 입력</h3>
-    <textarea id="sql" style="height:150px;" placeholder="예시) SELECT A.EMP_NO /* 사원번호 */ 
-            ,A.EMP_NM /* 사원명 */ 
-            ,D.DEPT_CD /* 부서코드 */ 
-            ,A.DEPT_NM /* 부서명 */ "></textarea>
-
-    <label><input type="checkbox" id="addStateFlag" checked> stateFlag 자동 추가</label>
-    <button id="btn-parse">파싱
-        <help-tip>
-            (주의) 2)기존 컬럼 옵션UI와 3)결과는 지워지고 새로 생성됩니다.<br>
-            <b>파싱 규칙</b><br>
-            ✔ 쿼리의 SELECT 절을 넣으면 컬럼 목록 자동 추출<br>
-            ✔ 컬럼명과 alias 는 camelCase 로 변환<br>
-            ✔ /* 주석 */ 은 cname 으로 사용<br>
-        </help-tip>
-    </button>
-
-    <hr>
-
-    <!-- 2) 컬럼 옵션 UI -->
-    <h3>2) 컬럼 옵션 UI
-        <help-tip><b>수정 즉시 결과값(JSON)에 반영됩니다.</b></help-tip>
-    </h3>
-    <!-- ▼▼▼ 디스클로저 헤더 ▼▼▼ -->
-    <div id="bulk-toggle-header">
-        ▸ 일괄편집
+    <!-- iframe -->
+    <div class="frame-wrap">
+        <iframe id="mainFrame" src="grid-model-generator/index.html"></iframe>
     </div>
-    <help-tip><b>컬럼 값을 일괄 변경시 사용합니다.</b></help-tip>
-    <!-- ▼▼▼ 디스클로저 내용 ▼▼▼ -->
-    <div id="bulk-area">
 
-        <label>
-            정규식(대상):
-            <input id="bulk_regex" style="width:200px;" placeholder="미입력시 전체 대상">
-        </label>
+    <script>
+        const frame = document.getElementById("mainFrame");
+        const menus = document.querySelectorAll(".menu-item");
 
-        <help-tip>
-            <b>정규식 예시</b><br>
-            ✔ <code>^user</code> → user로 시작하는 컬럼<br>
-            ✔ <code>id$</code> → id로 끝나는 컬럼<br>
-            ✔ <code>(?i)name</code> → 대소문자 구분 없이 name<br>
-            ✔ <code>^(userId|deptId)$</code> → 특정 컬럼만<br>
-            ✔ <code>\d</code> → 숫자 포함 컬럼<br>
-        </help-tip>
+        document.querySelector(".topbar").addEventListener("click", (e) => {
+            const page = e.target.dataset.page;
+            if (!page) return;
 
+            frame.src = page;
 
-        <table class="bulk-table">
-            <thead>
-                <tr>
-                    <th style="width:70px;">
-                        적용
-                        <help-tip><b>일괄 적용시 변경할 속성을 체크합니다.</b></help-tip>
-                    </th>
-                    <th style="width:140px;">항목</th>
-                    <th>값</th>
-                </tr>
-            </thead>
-            <tbody>
-
-                <tr>
-                    <td><input type="checkbox" class="apply" data-target="hidden"></td>
-                    <td>hidden</td>
-                    <td>
-                        <label><input type="radio" name="bulk_hidden" value="true" checked> true</label>
-                        <label><input type="radio" name="bulk_hidden" value="false"> false</label>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td><input type="checkbox" class="apply" data-target="editable"></td>
-                    <td>editable</td>
-                    <td>
-                        <label><input type="radio" name="bulk_editable" value="true" checked> true</label>
-                        <label><input type="radio" name="bulk_editable" value="false"> false</label>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td><input type="checkbox" class="apply" data-target="required"></td>
-                    <td>required</td>
-                    <td>
-                        <label><input type="radio" name="bulk_required" value="true" checked> true</label>
-                        <label><input type="radio" name="bulk_required" value="false"> false</label>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td><input type="checkbox" class="apply" data-target="width"></td>
-                    <td>width</td>
-                    <td><input id="bulk_width" style="width:60px;"></td>
-                </tr>
-
-                <tr>
-                    <td><input type="checkbox" class="apply" data-target="align"></td>
-                    <td>align</td>
-                    <td>
-                        <div class="align-group">
-                            <label class="btn-radio">
-                                <input type="radio" name="bulk_align" value="left" checked>
-                                <span>left</span>
-                            </label>
-                            <label class="btn-radio">
-                                <input type="radio" name="bulk_align" value="center">
-                                <span>center</span>
-                            </label>
-                            <label class="btn-radio">
-                                <input type="radio" name="bulk_align" value="right">
-                                <span>right</span>
-                            </label>
-                        </div>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td><input type="checkbox" class="apply" data-target="edittype"></td>
-                    <td>edittype</td>
-                    <td>
-                        <div class="align-group">
-
-                            <!-- 미선택 -->
-                            <label class="btn-radio">
-                                <input type="radio" name="bulk_edittype" value="">
-                                <span>(none)</span>
-                            </label>
-
-                            <label class="btn-radio">
-                                <input type="radio" name="bulk_edittype" value="text">
-                                <span>text</span>
-                            </label>
-
-                            <label class="btn-radio">
-                                <input type="radio" name="bulk_edittype" value="select">
-                                <span>select</span>
-                            </label>
-
-                            <label class="btn-radio">
-                                <input type="radio" name="bulk_edittype" value="date">
-                                <span>date</span>
-                            </label>
-
-                            <label class="btn-radio">
-                                <input type="radio" name="bulk_edittype" value="currency">
-                                <span>currency</span>
-                            </label>
-
-                            <label class="btn-radio">
-                                <input type="radio" name="bulk_edittype" value="checkbox">
-                                <span>checkbox</span>
-                            </label>
-                        </div>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td><input type="checkbox" class="apply" data-target="editoptions"></td>
-                    <td>editoptions.value</td>
-                    <td>
-                        { value:
-                        <input id="bulk_editoptions" class="editoptions-input"
-                            placeholder='<pierp:gs cid="HR000" first="선택"/>'>
-                        }
-                    </td>
-                </tr>
-
-            </tbody>
-        </table>
-
-        <button onclick="applyBulk()">일괄 적용</button>
-    </div>
-    <hr>
-    <table id="colTable">
-        <thead>
-            <tr>
-                <th>포함
-                    <help-tip><b>✔(체크)해제 시 결과(JSON)에 포함되지 않습니다.</b></help-tip>
-                </th>
-                <th>name</th>
-                <th>cname</th>
-                <th width="60">width</th>
-                <th width="130">align</th>
-                <th>hidden</th>
-                <th>editable</th>
-                <th>required</th>
-                <th>edittype</th>
-                <th>editoptions</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
-
-    <hr>
-
-    <!-- 3) 출력 -->
-    <h3>3) 결과(JSON)</h3>
-    <textarea id="out" style="height:200px;"></textarea>
-
-    <script src="./js/sql-parser.js"></script>
-    <script src="./js/options-ui.js"></script>
-    <script src="./js/bulk.js"></script>
-    <script src="./js/help-tips.js"></script>
+            menus.forEach(m => m.classList.remove("active"));
+            e.target.classList.add("active");
+        });
+    </script>
 
 </body>
 
