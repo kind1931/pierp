@@ -1,0 +1,206 @@
+        body {
+            font-family: Consolas, monospace;
+            padding: 20px;
+        }
+
+        textarea {
+            width: 100%;
+            font-family: Consolas;
+        }
+
+        /* tooltip */
+        .help-wrapper {
+            display: inline-block;
+            position: relative;
+            z-index: 10;
+            vertical-align: middle;
+        }
+
+        .help-icon {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .help-tooltip {
+            font-family: Consolas, monospace;
+            position: absolute;
+            top: -4px;
+            left: 28px;
+            max-width: 500px;
+            width: auto;
+            display: inline-block;
+            white-space: nowrap;
+            padding: 10px;
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 12px;
+            line-height: 1.4;
+            display: none;
+            z-index: 999999;
+            text-align: left;
+        }
+
+        .help-wrapper:hover .help-tooltip {
+            display: block;
+        }
+
+        /* ----- BOTTOM ----- */
+        .tooltip-left-bottom {
+            top: 100%;
+            left: 50%;
+            transform: translateX(-95%);
+        }
+
+        /* bulk table */
+        .bulk-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 13px;
+        }
+
+        .bulk-table th,
+        .bulk-table td {
+            border: 1px solid #ccc;
+            padding: 5px 6px;
+        }
+
+        .bulk-row-change {
+            background: #d8fcd8 !important;
+        }
+
+        /* align group */
+        .align-group {
+            display: flex;
+            gap: 4px;
+        }
+
+        .btn-radio {
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .btn-radio input {
+            display: none;
+        }
+
+        .btn-radio span {
+            padding: 3px 8px;
+            border: 1px solid #bbb;
+            border-radius: 4px;
+            cursor: pointer;
+            background: #f5f5f5;
+            font-size: 12px;
+        }
+
+        .btn-radio input:checked+span {
+            background: #1677ff;
+            border-color: #1677ff;
+            color: #fff;
+        }
+
+        /* colTable */
+        #colTable {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 13px;
+        }
+
+        #colTable th,
+        #colTable td {
+            border: 1px solid #ccc;
+            padding: 6px;
+            vertical-align: top;
+        }
+
+        td input[type="checkbox"] {
+            display: block;
+            margin: 0 auto;
+        }
+
+        .edittype-select {
+            width: 100%;
+        }
+
+        .editoptions-wrap {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            white-space: nowrap;
+        }
+
+        .editoptions-input {
+            width: 80%;
+            font-size: 12px;
+        }
+
+        /* highlight */
+        .match-row {
+            background: #fffde7 !important;
+        }
+
+        /* 정규식 매칭 row */
+        .will-change {
+            background: #d8fcd8 !important;
+        }
+
+        /* 적용될 cell */
+        .col-change {
+            background: #d8fcd8 !important;
+        }
+
+        /* 적용 컬럼 헤더 */
+
+        /* 적용 이펙트 */
+        @keyframes flash {
+            0% {
+                background: #d8fcd8;
+            }
+
+            50% {
+                background: #b7f0c4;
+            }
+
+            100% {
+                background: #d8fcd8;
+            }
+        }
+
+        .flash {
+            animation: flash 0.4s ease-out;
+        }
+
+
+        /* ===============================
+   일괄편집 디스클로저 스타일
+=============================== */
+        #bulk-toggle-header {
+            margin-top: 0px;
+            padding: 8px 12px;
+            background: #f4f4f4;
+            border: 1px solid #ccc;
+            cursor: pointer;
+            user-select: none;
+            font-weight: 600;
+            width: fit-content;
+            opacity: 1;
+            pointer-events: auto;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        #bulk-toggle-header.disabled {
+            opacity: 0.4;
+            pointer-events: none;
+
+        }
+
+        #bulk-area {
+            margin-top: 8px;
+            padding: 12px;
+            border: 1px solid #ccc;
+            background: #fafafa;
+
+        }
