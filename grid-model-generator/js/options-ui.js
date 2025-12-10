@@ -436,7 +436,7 @@ function formatAsJsLines(cols) {
 
         const cnameVis = visualLength(cnameStr);
 
-        out += `  {name:'${nameStr}',` + padSpaces(nameStr.length, maxName);
+        out += `name:'${nameStr}',` + padSpaces(nameStr.length, maxName);
         out += `cname:'${cnameStr}',` + padSpaces(cnameVis, maxCname);
 
         out += `width:'${c.width}', `;
